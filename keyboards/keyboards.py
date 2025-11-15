@@ -29,5 +29,11 @@ groups_kb.row(
 my_groups_kb = InlineKeyboardBuilder()
 my_groups_kb.row(
     CallbackButton(text='Вступить в группу', payload='join_to_group'),
-    CallbackButton(text='Переименновать группу', payload='exit_the_group')
+    CallbackButton(text='Покинуть группу', payload='exit_the_group')
 )
+
+admin_groups_kb = InlineKeyboardBuilder()
+admin_groups_kb.row(CallbackButton(text='Удалить событие', payload='delete_event'))
+admin_groups_kb.row(CallbackButton(text='Создать группу', payload='create_the_group'))
+admin_groups_kb.row(CallbackButton(text='Добавить событие в группу', payload='create_an_event'))
+admin_groups_kb.row(CallbackButton(text='Удалить группу', payload='delete_group'))

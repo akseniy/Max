@@ -17,3 +17,12 @@ class Form(StatesGroup):
     delete_event = State()
     delete_user_number = State()
     delete_event_number = State()
+
+    create_event_choose_group = State()
+    create_event_name = State()
+    create_event_date = State()
+    create_event_start = State()
+    create_event_end = State()
+
+    delete_event_choose_group = State()
+    delete_event_choose_event = State()

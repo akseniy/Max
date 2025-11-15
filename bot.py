@@ -11,7 +11,6 @@ from handlers.handlers import base_router
 from asyncpg import create_pool
 
 
-
 async def main():
     logging.basicConfig(level=logging.INFO, filename='py_log.log', filemode='w')
 
@@ -21,14 +20,11 @@ async def main():
 
     # Инициализируем бот, диспетчер, redis и коннект к базе данных
     bot = Bot(token=config.Max_bot.token)
+
     main_dp = Dispatcher()
-    pool = await create_pool(user=config.db.db_user, database=config.db.database, host=config.db.db_host, port=config.db.db_port)
+    pool = await create_pool(password=config.db.db_password, user=config.db.db_user, database=config.db.database, host=config.db.db_host, port=config.db.db_port)
 
-
-
-
-    # Добавляем пул для общей видимости по проекту
-    main_dp.workflow_data.update({'pool': pool})
+    bot.pool = pool
 
 
 

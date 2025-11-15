@@ -1,2 +1,7 @@
 INFO:dispatcher:Бот: @t203_hakaton_bot first_name=Хакатон 203 id=79049893
-INFO:dispatcher:4 событий на обработку
+INFO:dispatcher:25 событий на обработку
+INFO:dispatcher:Обработано: router_id: 0 | UpdateType.MESSAGE_CALLBACK | chat_id: 16999997, user_id: 95769240
+INFO:dispatcher:Обработано: router_id: 0 | UpdateType.MESSAGE_CALLBACK | chat_id: 16999997, user_id: 95769240
+INFO:dispatcher:Обработано: router_id: 0 | UpdateType.MESSAGE_CALLBACK | chat_id: 16999997, user_id: 95769240
+INFO:dispatcher:Обработано: router_id: 0 | UpdateType.MESSAGE_CALLBACK | chat_id: 16999997, user_id: 95769240
+INFO:dispatcher:Обработано: router_id: 0 | UpdateType.MESSAGE_CALLBACK | chat_id: 16999997, user_id: 95769240
