@@ -15,7 +15,6 @@ base_router = Router()
 
 # Загружаем конфиг в переменную config
 config: Config = load_config()
-pool = await create_pool(user=config.db.db_user, database=config.db.database, host=config.db.db_host, port=config.db.db_port)
 
 @base_router.message_created(F.message.body.text=='/start')
 async def start(event: MessageCreated, context: MemoryContext):

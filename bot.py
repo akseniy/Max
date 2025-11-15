@@ -28,13 +28,12 @@ async def main():
 
 
     # Добавляем пул для общей видимости по проекту
-    # main_dp.workflow_data.update({'pool': pool})
-
+    main_dp.workflow_data.update({'pool': pool})
 
 
 
     # Регистриуем роутеры на диспетчере для основного бота
-    main_dp.include_routers(base_router())
+    main_dp.include_routers(base_router)
 
 
     await main_dp.start_polling(bot)
