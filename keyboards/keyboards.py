@@ -25,3 +25,9 @@ groups_kb.row(
     CallbackButton(text='Мои группы', payload='my_groups'),
     CallbackButton(text='Управление группами', payload='admin_groups')
 )
+
+my_groups_kb = InlineKeyboardBuilder()
+my_groups_kb.row(
+    CallbackButton(text='Вступить в группу', payload='join_to_group'),
+    CallbackButton(text='Переименновать группу', payload='exit_the_group')
+)
