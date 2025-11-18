@@ -61,7 +61,7 @@ Git
 
 🛠 Установка
 Клонируйте проект:
-git clone https://github.com/your-name/your-repository.git
+git clone https://github.com/akseniy/Max.git
 cd your-repository
 
 
