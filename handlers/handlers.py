@@ -8,7 +8,7 @@ from maxapi.types import CallbackButton
 
 from fsm.fsm import Form
 from maxapi import Router, F, Bot
-from maxapi.types import MessageCreated, MessageCallback
+from maxapi.types import MessageCreated, MessageCallback, BotStarted
 from maxapi.context import MemoryContext, State, StatesGroup
 
 
