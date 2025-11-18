@@ -18,15 +18,23 @@ base_router = Router()
 # Загружаем конфиг в переменную config
 config: Config = load_config()
 
+@base_router.bot_started()
+async def bot_started(event: BotStarted):
+    await event.bot.send_message(
+        chat_id=event.chat_id,
+        text='Привет! Отправь мне /start'
+    )
+    data = event.message.sender
+    pool = event.bot.pool
+    async with pool.acquire() as conn:
+        await conn.execute("INSERT INTO users VALUES ($1, $2, $3)", data.user_id, data.first_name, data.last_name)
+
+
 @base_router.message_created(F.message.body.text=='/start')
 async def start(event: MessageCreated, context: MemoryContext):
     await event.message.answer(text=lexicon['hello_message'], attachments=[menu_kb.as_markup()])
     await context.clear()
-    data = event.message.sender
-    pool = event.bot.pool
-    async with pool.acquire() as conn:
-            await conn.execute("INSERT INTO users VALUES ($1, $2, $3)", data.user_id, data.first_name, data.last_name)
-
+    
 
 
 @base_router.message_callback(F.callback.payload == 'menu')
@@ -624,3 +632,10 @@ async def join_group_process(event: MessageCreated, context: MemoryContext):
             )
 
     await context.set_state(Form.menu)
+
+
+
+@base_router.message_created(F.message.body.text)
+async def other(event: MessageCreated, context: MemoryContext):
+    await event.message.answer(text=lexicon['other_message'])
+    context.clear()
