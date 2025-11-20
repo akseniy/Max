@@ -547,7 +547,7 @@ async def show_schedule(callback: MessageCallback, context: MemoryContext):
         )
 
     if not rows:
-        await callback.message.answer("У вас пока нет событий.")
+        await callback.message.answer("У вас пока нет событий.", attachments=[menu_kb.as_markup()]))
         return
 
     # Формирование комплексного расписания
