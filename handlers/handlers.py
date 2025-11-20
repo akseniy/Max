@@ -197,43 +197,7 @@ async def leave_group_process(event: MessageCreated, context: MemoryContext):
     await context.set_state(Form.menu)
 
 
-@base_router.message_callback(F.callback.payload == 'my_groups')
-async def message_callback_my_groups(callback: MessageCallback, context: MemoryContext):
-    pool = callback.bot.pool
-    user_id = callback.message.recipient.user_id
 
-    async with pool.acquire() as conn:
-        rows = await conn.fetch(
-            """
-            SELECT "group".name AS group_name
-            FROM "group"
-            JOIN user_group ON user_group.fk_group_id = "group".id
-            WHERE user_group.fk_user_id = $1
-            """,
-            int(user_id)
-        )
-
-    if not rows:
-        await callback.message.answer("У вас нет групп.")
-        await callback.message.answer(text=lexicon['menu_message'], attachments=[menu_kb.as_markup()])
-        await context.set_state(Form.menu)
-        return
-
-    # Формируем текст списка групп
-    text = "\n".join([f"{i+1}. {r['group_name']}" for i, r in enumerate(rows)])
-    await callback.message.answer("Ваши группы:\n\n" + text)
-
-    # Добавляем инлайн кнопки для действий по каждой группе
-    kb = InlineKeyboardBuilder()
-    for i, r in enumerate(rows, start=1):
-        kb.row(CallbackButton(text=f"Добавить событие ({r['group_name']})", payload=f"add_event:{i}"))
-        kb.row(CallbackButton(text=f"Удалить событие ({r['group_name']})", payload=f"del_event:{i}"))
-
-    # Кнопка назад
-    kb.row(CallbackButton(text="⬅️ Назад", payload="menu"))
-
-    await callback.message.answer(text="Выберите действие:", attachments=[kb.as_markup()])
-    await context.set_state(Form.my_groups)
 
 
 
