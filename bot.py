@@ -22,7 +22,7 @@ async def init_database(pool):
             
             # Создаем таблицы
             await conn.execute('''
-                CREATE TABLE IF NOT EXISTS "users" (
+                CREATE TABLE IF NOT EXISTS users (
                     id BIGINT PRIMARY KEY,
                     first_name TEXT,
                     last_name TEXT,
