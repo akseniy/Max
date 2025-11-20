@@ -256,7 +256,7 @@ async def message_create_the_name(event: MessageCreated, context: MemoryContext)
         # 2. Делаем создателя администратором
         await conn.execute(
             """
-            INSERT INTO admin (fk_user_id, fk_group_id)
+            INSERT INTO "admin" (fk_user_id, fk_group_id)
             VALUES ($1, $2)
             """,
             int(user_id),
