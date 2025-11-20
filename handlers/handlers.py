@@ -227,6 +227,7 @@ async def message_callback_create_the_group(callback: MessageCallback, context: 
 
     await callback.message.answer(text='Введите желаемое название')
     await context.set_state(Form.create_the_group)
+    print(1)
 
 
 @base_router.message_created(F.message.body.text, Form.create_the_group)
@@ -234,6 +235,7 @@ async def message_create_the_name(event: MessageCreated, context: MemoryContext)
 
     name = event.message.body.text
     user_id = event.message.sender.user_id
+    print(2)
 
     pool = event.bot.pool
     async with pool.acquire() as conn:
@@ -249,6 +251,7 @@ async def message_create_the_name(event: MessageCreated, context: MemoryContext)
         )
 
         group_id = row["id"]
+        print(3)
 
         # 2. Делаем создателя администратором
         await conn.execute(
@@ -260,6 +263,8 @@ async def message_create_the_name(event: MessageCreated, context: MemoryContext)
             int(group_id)
         )
 
+    print(4)
+
     # 3. Сообщение пользователю
     await event.message.answer(
         text=f"Группа создана!\nТвой код приглашения: {group_id}",
@@ -267,6 +272,7 @@ async def message_create_the_name(event: MessageCreated, context: MemoryContext)
     )
 
     await context.set_state(Form.menu)
+    print(5)
 
 
 
