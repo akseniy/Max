@@ -88,12 +88,12 @@ async def create_pool_with_retry(config, retries=10, delay=3):
                 port=config.db.db_port
             )
             print("✅ Подключение к базе успешно")
-            await init_database(pool)
             return pool
         except Exception as e:
             print(f"⚠️ База данных не готова, попытка {i+1}/{retries}...")
             await asyncio.sleep(delay)
     raise Exception("❌ Не удалось подключиться к базе после нескольких попыток")
+
 
 
 async def main():
