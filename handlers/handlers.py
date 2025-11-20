@@ -615,6 +615,101 @@ async def join_group_process(event: MessageCreated, context: MemoryContext):
 
     await context.set_state(Form.menu)
 
+@base_router.message_callback(F.callback.payload == 'delete_group')
+async def delete_group_start(callback: MessageCallback, context: MemoryContext):
+    """Начало процесса удаления группы - показываем список групп пользователя"""
+    pool = callback.bot.pool
+    user_id = callback.message.recipient.user_id
+
+    async with pool.acquire() as conn:
+        # Получаем группы где пользователь является админом
+        rows = await conn.fetch("""
+            SELECT g.id, g.name
+            FROM "group" g
+            JOIN admin a ON a.fk_group_id = g.id
+            WHERE a.fk_user_id = $1
+            ORDER BY g.id
+        """, int(user_id))
+
+    if not rows:
+        await callback.message.answer("У вас нет групп, где вы являетесь админом.")
+        return
+
+    # Сохраняем группы в FSM
+    groups = [{"id": row["id"], "name": row["name"]} for row in rows]
+    await context.update_data(delete_groups=groups)
+
+    # Формируем красивый список групп
+    text = "📋 Ваши группы (вы админ):\n\n"
+    for i, group in enumerate(groups, start=1):
+        text += f"{i}) {group['name']} (ID: {group['id']})\n"
+
+    text += "\n👇 Введите номер группы, которую хотите удалить:"
+
+    await callback.message.answer(text)
+    await context.set_state(Form.delete_the_group)
+
+
+
+@base_router.message_created(F.message.body.text, Form.delete_the_group)
+async def delete_group_process(event: MessageCreated, context: MemoryContext):
+    """Обработка введенного номера группы и удаление"""
+    pool = event.bot.pool
+    user_id = event.message.sender.user_id
+    num_str = event.message.body.text.strip()
+
+    try:
+        num = int(num_str)
+    except ValueError:
+        await event.message.answer("❌ Введите корректный номер.", attachments=[menu_kb.as_markup()])
+        await context.set_state(Form.menu)
+        return
+
+    # Получаем сохраненные группы из FSM
+    data = await context.get_data()
+    groups = data.get('delete_groups', [])
+
+    if not groups:
+        await event.message.answer("❌ Данные о группах устарели. Начните заново.", attachments=[menu_kb.as_markup()])
+        await context.set_state(Form.menu)
+        return
+
+    # Проверяем корректность номера
+    if num < 1 or num > len(groups):
+        await event.message.answer(f"❌ Неверный номер. Введите число от 1 до {len(groups)}.", attachments=[menu_kb.as_markup()])
+        await context.set_state(Form.menu)
+        return
+
+    # Получаем группу для удаления
+    group_to_delete = groups[num - 1]
+    group_id = group_to_delete['id']
+    group_name = group_to_delete['name']
+
+    try:
+        async with pool.acquire() as conn:
+            # Удаляем группу (каскадное удаление настроено в БД)
+            await conn.execute('DELETE FROM "group" WHERE id = $1', group_id)
+            
+        await event.message.answer(
+            f"✅ Группа «{group_name}» успешно удалена!",
+            attachments=[menu_kb.as_markup()]
+        )
+        
+    except Exception as e:
+        print(f"❌ Ошибка при удалении группы: {e}")
+        await event.message.answer(
+            "❌ Произошла ошибка при удалении группы.",
+            attachments=[menu_kb.as_markup()]
+        )
+
+    await context.set_state(Form.menu)
+
+
+
+
+
+
+
 
 
 @base_router.message_created(F.message.body.text)
