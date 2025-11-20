@@ -27,7 +27,7 @@ async def bot_started(event: BotStarted):
     data = event.message.sender
     pool = event.bot.pool
     async with pool.acquire() as conn:
-        await conn.execute("INSERT INTO "users" VALUES ($1, $2, $3)", data.user_id, data.first_name, data.last_name)
+        await conn.execute("INSERT INTO users VALUES ($1, $2, $3)", data.user_id, data.first_name, data.last_name)
 
 
 @base_router.message_created(F.message.body.text=='/start')
