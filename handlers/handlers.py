@@ -24,14 +24,26 @@ async def bot_started(event: BotStarted):
         chat_id=event.chat_id,
         text='Привет! Отправь мне /start'
     )
-    data = event.message.sender
-    pool = event.bot.pool
-    async with pool.acquire() as conn:
-        await conn.execute("INSERT INTO users VALUES ($1, $2, $3)", data.user_id, data.first_name, data.last_name)
+
 
 
 @base_router.message_created(F.message.body.text=='/start')
 async def start(event: MessageCreated, context: MemoryContext):
+     # Добавляем пользователя в базу
+    data = event.message.sender
+    pool = event.bot.pool
+    
+    if pool:
+        try:
+            async with pool.acquire() as conn:
+                await conn.execute(
+                    "INSERT INTO users (id, first_name, last_name) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING",
+                    data.user_id, data.first_name, data.last_name
+                )
+                print(f"✅ Пользователь {data.user_id} добавлен в базу")
+        except Exception as e:
+            print(f"❌ Ошибка при добавлении пользователя: {e}")
+    
     await event.message.answer(text=lexicon['hello_message'], attachments=[menu_kb.as_markup()])
     await context.clear()
     
